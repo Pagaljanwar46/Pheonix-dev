@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Loris Bukvic Portfolio Clone</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Pixelify+Sans:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-main: #FFFFFF;
+            --text-dim: #666666;
+            --card-bg: #111111;
+            --accent-glow: rgba(255, 255, 255, 0.15);
+            --font-display: 'Unbounded', sans-serif;
+            --font-pixel: 'Pixelify Sans', monospace;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            padding-bottom: 200px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            position: relative;
+            height: 90vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 80%;
+            background: radial-gradient(circle at 50% 30%, rgba(20, 80, 100, 0.4), transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10;
+            pointer-events: none; 
+        }
+
+        .hero-text-wrapper {
+            z-index: 20;
+            margin-top: auto;
+            max-width: 900px;
+            pointer-events: auto;
+        }
+
+        .hero-label {
+            font-family: var(--font-body);
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-headline {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: clamp(24px, 5vw, 48px);
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        /* --- SECTION STYLING --- */
+        section {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 10px;
+        }
+
+        .h-title {
+            font-family: var(--font-pixel);
+            font-size: 2.5rem;
+            line-height: 1;
+            margin: 0;
+        }
+
+        .h-link {
+            font-size: 0.9rem;
+            color: #fff;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            cursor: pointer;
+        }
+
+        /* --- WORKS GRID --- */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .work-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .work-card:active { transform: scale(0.96); }
+        .work-card:hover { transform: scale(0.98); }
+
+        .work-card img {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .work-card:hover img { opacity: 1; }
+
+        .work-meta {
+            position: absolute;
+            bottom: 15px; left: 15px;
+            z-index: 5;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .work-name { font-weight: 700; font-size: 1.1rem; }
+        .work-cat { font-size: 0.8rem; color: #ccc; }
+
+        /* --- LISTS --- */
+        .list-row {
+            display: grid;
+            grid-template-columns: 50px 1fr;
+            padding: 20px 0;
+            border-bottom: 1px solid #1a1a1a;
+            align-items: start;
+        }
+
+        .list-icon {
+            font-family: 'Times New Roman', serif;
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: #444;
+        }
+        .icon-w { font-family: sans-serif; font-weight: 900; } 
+        .icon-m { font-family: monospace; font-weight: 900; }
+
+        .list-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .list-content p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        /* --- STACK --- */
+        .stack-box {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-dim);
+        }
+        .stack-box span { color: #fff; margin: 0 4px; }
+
+        /* --- FOOTER (PERFORMANCE OPTIMIZED) --- */
+        .footer-visual {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 40px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .glitch-face {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Simple CSS filters are VERY fast compared to SVG filters */
+            filter: grayscale(100%) contrast(1.5) brightness(0.6);
+            /* Soft fade at the bottom */
+            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            /* Smooth zoom animation */
+            transition: transform 0.5s ease-out;
+        }
+        
+        .footer-visual:hover .glitch-face {
+            transform: scale(1.02);
+        }
+
+        .lets-work-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-pixel);
+            font-size: 2rem;
+            text-transform: uppercase;
+            z-index: 10;
+            text-shadow: 0 4px 20px rgba(0,0,0,1);
+            text-align: center;
+            width: 100%;
+        }
+
+        /* --- FIXED BOTTOM DOCK --- */
+        .ui-stack {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-contact {
+            background: #e6e6e6;
+            color: #000;
+            padding: 12px 35px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-contact:hover { transform: scale(1.05); }
+        .btn-contact:active { transform: scale(0.95); }
+
+        .dock-folder {
+            width: 60px;
+            height: 60px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .dock-folder:hover {
+            transform: translateY(-2px);
+            background: rgba(40,40,40,0.9);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .dock-folder i { font-size: 24px; color: #fff; margin-bottom: 2px; }
+        .dock-folder span { font-size: 10px; color: #888; font-family: var(--font-pixel); letter-spacing: 1px; }
+
+        .dock-socials {
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 5px;
+            border-radius: 18px;
+        }
+        .social-btn {
+            width: 48px;
+            height: 48px;
+            background: #0f0f0f;
+            border: 1px solid #222;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .social-btn:hover {
+            background: #222;
+            border-color: #555;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="hero-bg"></div>
+        <div id="canvas-container"></div>
+
+        <div class="hero-text-wrapper">
+            <span class="hero-label">Pheonix.Dev</span>
+            <h1 class="hero-headline">
+                Pheonix is a student turned multimedia web-developer focusing on web experiences, and stuff that looks good.
+            </h1>
+        </div>
+    </header>
+
+    <section id="works">
+        <div class="section-header">
+            <h2 class="h-title">WORKS</h2>
+            <div class="h-link" onclick="window.location.href='work_menu.html'">Go to Works →</div>
+        </div>
+        
+        <div class="works-grid">
+            <a href="#" class="work-card">
+                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" alt="Project 1">
+                <div class="work-meta">
+                    <div class="work-name">Daydream Player</div>
+                    <div class="work-cat">Web / 3D</div>
+                </div>
+            </a>
+
+            <a href="#" class="work-card">
+                <img src="https://images.unsplash.com/photo-1634152962476-4b8a00e1915c?q=80&w=800&auto=format&fit=crop" alt="Project 2">
+                <div class="work-meta">
+                    <div class="work-name">Bennszorult Lélegzet</div>
+                    <div class="work-cat">Interactive</div>
+                </div>
+            </a>
+
+            <a href="#" class="work-card">
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&auto=format&fit=crop" alt="Project 3">
+                <div class="work-meta">
+                    <div class="work-name">ParkBee</div>
+                    <div class="work-cat">Product Design</div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-header">
+            <h2 class="h-title">AWARDS AND<br>RECOGNITIONS</h2>
+        </div>
+        
+        <div class="list-row">
+            <div class="list-icon icon-w">W.</div>
+            <div class="list-content">
+                <h3>AWWWARDS</h3>
+                <p>Site of The Day | DAYDREAM PLAYER</p>
+            </div>
+        </div>
+        <div class="list-row">
+            <div class="list-icon icon-m">m</div>
+            <div class="list-content">
+                <h3>MUZLI</h3>
+                <p>Featured on Muzli Picks | DAYDREAM PLAYER</p>
+            </div>
+        </div>
+        <div class="list-row">
+            <div class="list-icon">B̄</div>
+            <div class="list-content">
+                <h3>BEHANCE</h3>
+                <p>Featured in Product Design</p>
+            </div>
+        </div>
+        <div class="list-row">
+            <div class="list-icon">Ps</div>
+            <div class="list-content">
+                <h3>BEHANCE</h3>
+                <p>Featured in Photoshop Category</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-header">
+            <h2 class="h-title">EDUCATION</h2>
+        </div>
+        <div class="list-row" style="border:none;">
+            <div class="list-icon">•</div>
+            <div class="list-content">
+                <h3>Pre-Graduate</h3>
+                <p>Higher secoundary</p>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 50px;">
+            <h2 class="h-title">STACK</h2>
+        </div>
+        <div class="stack-box">
+            <span>HTML</span> / <span>CSS</span> / <span>JavaScript</span> / <span>After Effects</span> / <span>Firebase</span> / <span>Unity</span> / <span>Figma</span> / <span>Node.JS</span> / <span>Webflow</span> / <span>Canva</span>
+        </div>
+    </section>
+
+    <div class="footer-visual">
+        <img src="https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=800&auto=format&fit=crop" class="glitch-face" alt="Portrait">
+        <div class="lets-work-text">Let's Work Together</div>
+    </div>
+
+    <div class="ui-stack">
+        <button class="btn-contact" onclick="window.location.href='contact.html'">Contact</button>
+        
+        <div class="dock-folder" onclick="window.location.href='work_menu.html'">
+            <i class="ph-fill ph-folder-notch"></i>
+            <span>WORKS</span>
+        </div>
+
+        <div class="dock-socials">
+            <a href="https://www.instagram.com/04_09_007_/" class="social-btn"><i class="ph-bold ph-instagram-logo"></i></a>
+            <a href="https://www.fiverr.com/s/vvLqlQe" class="social-btn"><i class="ph-bold ph-behance-logo"></i></a>
+            <a href="https://whatsapp.com/channel/0029VbBwkM62P59eHtRtHI3M" class="social-btn"><i class="ph-bold ph-paper-plane-tilt"></i></a>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050505, 0.03); 
+
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(0, 0, 22); 
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        container.appendChild(renderer.domElement);
+
+        // --- MATERIALS ---
+        const skullMaterial = new THREE.MeshStandardMaterial({
+            color: 0xeeeeee, 
+            metalness: 0.8,
+            roughness: 0.3,
+        });
+
+        const hatMaterial = new THREE.MeshStandardMaterial({
+            color: 0xFFD700, 
+            metalness: 0.6,
+            roughness: 0.4,
+        });
+
+        const ribbonMaterial = new THREE.MeshStandardMaterial({
+            color: 0xcc0000,
+            metalness: 0.4,
+            roughness: 0.6,
+        });
+
+        const voidMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+
+        // --- BUILD CHARACTER ---
+        const pivotGroup = new THREE.Group();
+        pivotGroup.position.y = 8; 
+        scene.add(pivotGroup);
+
+        const pirateGroup = new THREE.Group();
+        pirateGroup.position.y = -6; 
+        
+        // --- THIS LINE MAKES IT SMALLER ---
+        pirateGroup.scale.set(0.6, 0.6, 0.6); 
+        
+        pivotGroup.add(pirateGroup);
+
+        // 1. CROSSBONES
+        const boneGroup = new THREE.Group();
+        boneGroup.position.z = -1.5; 
+        pirateGroup.add(boneGroup);
+
+        function createBone(rotationZ) {
+            const bGroup = new THREE.Group();
+            const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 8, 16), skullMaterial);
+            shaft.rotation.z = rotationZ;
+            bGroup.add(shaft);
+
+            const knobGeo = new THREE.SphereGeometry(0.5, 16, 16);
+            const dist = 4;
+            const x = Math.sin(rotationZ) * dist;
+            const y = Math.cos(rotationZ) * dist;
+
+            const k1 = new THREE.Mesh(knobGeo, skullMaterial);
+            k1.position.set(-x - 0.3, y, 0);
+            bGroup.add(k1);
+            const k2 = new THREE.Mesh(knobGeo, skullMaterial);
+            k2.position.set(-x + 0.3, y, 0);
+            bGroup.add(k2);
+            const k3 = new THREE.Mesh(knobGeo, skullMaterial);
+            k3.position.set(x - 0.3, -y, 0);
+            bGroup.add(k3);
+            const k4 = new THREE.Mesh(knobGeo, skullMaterial);
+            k4.position.set(x + 0.3, -y, 0);
+            bGroup.add(k4);
+
+            return bGroup;
+        }
+
+        boneGroup.add(createBone(Math.PI / 4)); 
+        boneGroup.add(createBone(-Math.PI / 4));
+
+
+        // 2. SKULL HEAD
+        const skullGroup = new THREE.Group();
+        pirateGroup.add(skullGroup);
+
+        const cranium = new THREE.Mesh(new THREE.SphereGeometry(2, 32, 32), skullMaterial);
+        skullGroup.add(cranium);
+
+        const jaw = new THREE.Mesh(new THREE.BoxGeometry(2, 1.2, 1.5), skullMaterial);
+        jaw.position.y = -1.5;
+        skullGroup.add(jaw);
+
+        for(let i=-2; i<=2; i++) {
+             if(i===0) continue; 
+             const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.1, 1, 0.1), voidMaterial);
+             tooth.position.set(i * 0.3, -1.5, 0.76);
+             skullGroup.add(tooth);
+        }
+
+        const eyeGeo = new THREE.SphereGeometry(0.65, 16, 16);
+        const eyeL = new THREE.Mesh(eyeGeo, voidMaterial);
+        eyeL.position.set(-0.8, -0.2, 1.4);
+        skullGroup.add(eyeL);
+
+        const eyeR = new THREE.Mesh(eyeGeo, voidMaterial);
+        eyeR.position.set(0.8, -0.2, 1.4);
+        skullGroup.add(eyeR);
+
+        const nose = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.5, 3), voidMaterial);
+        nose.position.set(0, -0.8, 1.8);
+        nose.rotation.x = -0.5;
+        skullGroup.add(nose);
+
+
+        // 3. STRAW HAT
+        const hatGroup = new THREE.Group();
+        hatGroup.position.y = 1.2; 
+        hatGroup.rotation.x = -0.2; 
+        pirateGroup.add(hatGroup);
+
+        const brim = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 4.5, 0.1, 32), hatMaterial);
+        hatGroup.add(brim);
+
+        const dome = new THREE.Mesh(new THREE.SphereGeometry(2.1, 32, 16, 0, Math.PI * 2, 0, Math.PI/2), hatMaterial);
+        dome.position.y = 0;
+        hatGroup.add(dome);
+
+        const ribbon = new THREE.Mesh(new THREE.CylinderGeometry(2.15, 2.15, 0.4, 32), ribbonMaterial);
+        ribbon.position.y = 0.2;
+        hatGroup.add(ribbon);
+
+
+        // --- CHAIN LINKS ---
+        // Increased number of links to 10 (was 6) so the smaller chain reaches the top
+        const chainGroup = new THREE.Group();
+        chainGroup.position.y = 3.5; 
+        pirateGroup.add(chainGroup);
+        
+        const hatLoop = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.1, 16, 100), skullMaterial);
+        hatLoop.rotation.y = Math.PI / 2;
+        hatLoop.position.y = -0.2;
+        chainGroup.add(hatLoop);
+
+        for(let i=0; i<10; i++) {
+            const link = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.1, 8, 16), skullMaterial);
+            link.position.y = 1 + (i * 1.2); 
+            link.rotation.y = (i % 2 === 0) ? 0 : Math.PI/2;
+            chainGroup.add(link);
+        }
+
+
+        // --- LIGHTING ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 2.0); 
+        scene.add(ambientLight);
+
+        const frontLight = new THREE.DirectionalLight(0xffffff, 3.0);
+        frontLight.position.set(0, 10, 20);
+        scene.add(frontLight);
+
+        const blueLight = new THREE.PointLight(0x0088ff, 400, 50);
+        blueLight.position.set(-10, 5, -5);
+        scene.add(blueLight);
+
+        const warmLight = new THREE.PointLight(0xffaa00, 200, 50);
+        warmLight.position.set(10, -5, 5);
+        scene.add(warmLight);
+
+
+        // --- ANIMATION ---
+        const clock = new THREE.Clock();
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = clock.getElapsedTime();
+
+            pivotGroup.rotation.z = Math.sin(time * 1.5) * 0.15; 
+            pirateGroup.position.y = -6 + Math.sin(time * 2) * 0.1;
+
+            pirateGroup.rotation.y = THREE.MathUtils.lerp(pirateGroup.rotation.y, mouseX * 0.6, 0.05);
+            pirateGroup.rotation.x = THREE.MathUtils.lerp(pirateGroup.rotation.x, mouseY * 0.3, 0.05);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

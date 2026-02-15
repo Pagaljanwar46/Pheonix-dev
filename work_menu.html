@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Infinite Scroll Wheel Video</title>
+    <style>
+        /* --- RESET & FONTS --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- BACKGROUND VIDEO LAYER --- */
+        .bg-video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2; /* Behind everything */
+            overflow: hidden;
+        }
+
+        .bg-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* ESSENTIAL: Ensures video fills screen on mobile & desktop */
+            opacity: 0.6; /* Adjust brightness of video here */
+            filter: grayscale(100%) contrast(1.1); /* Optional: Stylish look */
+        }
+        
+        /* Gradient Overlay to darken edges and help text readability */
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; /* Above video, behind text */
+            background: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.5) 25%, rgba(0,0,0,0.5) 75%, #000 100%);
+            pointer-events: none;
+        }
+
+        /* --- HEADER --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 24px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .logo {
+            pointer-events: auto;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo svg { width: 100%; fill: #fff; }
+
+        .contact-btn {
+            pointer-events: auto;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .contact-btn:hover { background: #fff; color: #000; }
+
+        /* --- FILTER TOGGLE --- */
+        .filter-wrapper {
+            position: fixed;
+            top: 15%; 
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 90;
+            pointer-events: none;
+        }
+
+        .filter-pill {
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .grid-icon {
+            display: grid;
+            grid-template-columns: repeat(2, 4px);
+            gap: 2px;
+            opacity: 0.6;
+        }
+        .grid-icon span {
+            width: 4px; height: 4px;
+            background: #fff;
+            border-radius: 1px;
+        }
+
+        .filter-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+        .filter-text span.active { color: #fff; }
+        .filter-text span.slash { margin: 0 4px; opacity: 0.3; }
+
+        /* --- SCROLL VIEWPORT --- */
+        .scroll-viewport {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory; 
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            scroll-behavior: smooth; 
+        }
+        
+        .scroll-viewport::-webkit-scrollbar { display: none; }
+
+        .list-container {
+            padding-top: 50vh; 
+            padding-bottom: 50vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .project-item {
+            position: relative;
+            height: 200px; 
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: center;
+            text-decoration: none;
+            opacity: 0.2;
+            transform: scale(0.8);
+            will-change: transform, opacity, filter;
+            cursor: pointer; 
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+            line-height: 1;
+            margin-bottom: 10px;
+            letter-spacing: -0.03em;
+            transition: color 0.2s;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5); /* Helps text pop over video */
+        }
+        .title.caps { text-transform: uppercase; font-size: 3rem; }
+
+        .meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.6);
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+        .meta-box-icon {
+            width: 10px; height: 10px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 2.2rem; }
+            .title.caps { font-size: 2rem; }
+            .project-item { height: 160px; }
+            .filter-wrapper { top: 120px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-video-container">
+        <video class="bg-video" autoplay muted loop playsinline>
+            <source src="https://res.cloudinary.com/dgcr7e27r/video/upload/v1771145433/7169903-uhd_4096_2160_25fps_nwjghd.mp4" type="video/mp4">
+            </video>
+    </div>
+    
+    <div class="bg-overlay"></div>
+
+    <header>
+      <a href="index.html" class="logo">
+    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 60 C 30 60, 35 25, 50 25 C 65 25, 70 60, 70 60" 
+              stroke="white" 
+              stroke-width="5" 
+              stroke-linecap="round" 
+              stroke-linejoin="round"/>
+        
+        <path d="M29 58 C 29 58, 50 68, 71 58 L 71 48 C 71 48, 50 58, 29 48 Z" 
+              fill="white"/>
+
+        <ellipse cx="50" cy="60" rx="40" ry="10" 
+                 stroke="white" 
+                 stroke-width="5"/>
+    </svg>
+</a>
+        </a>
+        <div class="contact-btn" onclick="window.location.href='contact.html'">Contact</div>
+    </header>
+
+    <div class="filter-wrapper">
+        <div class="filter-pill">
+            <div class="grid-icon"><span></span><span></span><span></span><span></span></div>
+            <div class="filter-text">
+                <span class="active">Works</span><span class="slash">/</span><span>#</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-viewport" id="viewport">
+        <div class="list-container" id="list"></div>
+    </div>
+
+    <script>
+        // --- 1. DATA ---
+        const projects = [
+            { title: "Kendrick Artists", cat: "Web", year: "2025", url: "https://kendrickartists.com/" },
+            { title: "Restraunts", cat: "Web", year: "2025", url: "https://pagaljanwar46.github.io/restaurants-preview/" },
+            { title: "Album", cat: "Web", year: "2025", url: "https://pagaljanwar46.github.io/3D-Album/" },
+        ];
+
+        const list = document.getElementById('list');
+        const viewport = document.getElementById('viewport');
+
+        // --- 2. SETUP SCROLL ---
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        // --- 3. BUILD THE LIST (Clone 20x for infinite feel) ---
+        const setsToClone = 20; 
+        const renderData = [];
+        for(let i=0; i<setsToClone; i++) {
+            renderData.push(...projects);
+        }
+
+        renderData.forEach((p, i) => {
+            const el = document.createElement('a');
+            el.href = p.url; 
+            el.className = 'project-item';
+            el.dataset.index = i;
+            el.innerHTML = `
+                <div class="title ${p.caps ? 'caps' : ''}">${p.title}</div>
+                <div class="meta">
+                    <div class="meta-box-icon"></div>
+                    <span>${p.cat}</span>
+                    <span style="opacity:0.5">${p.year}</span>
+                </div>
+            `;
+            list.appendChild(el);
+        });
+
+        // --- 4. INFINITE LOOP LOGIC ---
+        let itemHeight = 0;
+        let singleSetHeight = 0;
+        let totalHeight = 0;
+
+        function calculateDimensions() {
+            const item = document.querySelector('.project-item');
+            if(item) {
+                itemHeight = item.offsetHeight;
+                singleSetHeight = itemHeight * projects.length;
+                totalHeight = itemHeight * renderData.length;
+            }
+        }
+
+        function checkInfiniteLoop() {
+            if (singleSetHeight === 0) calculateDimensions();
+            
+            const scrollTop = viewport.scrollTop;
+            
+            if (scrollTop > totalHeight - (singleSetHeight * 2)) {
+                viewport.scrollTop = totalHeight / 2;
+            }
+            else if (scrollTop < singleSetHeight) {
+                viewport.scrollTop = totalHeight / 2;
+            }
+        }
+
+        // --- 5. ANIMATION LOOP ---
+        function animate() {
+            const center = window.innerHeight / 2;
+            const items = document.querySelectorAll('.project-item');
+            
+            items.forEach(item => {
+                const rect = item.getBoundingClientRect();
+                const itemCenter = rect.top + (rect.height / 2);
+                const dist = Math.abs(center - itemCenter);
+                const range = 400; 
+                
+                if (dist < range) {
+                    const norm = dist / range;
+                    const scale = 1 - (norm * 0.2); 
+                    const opacity = 1 - (norm * 0.8);
+                    const blur = norm * 5;
+
+                    item.style.transform = `scale(${scale})`;
+                    item.style.opacity = Math.max(opacity, 0.1); 
+                    item.style.filter = `blur(${blur}px)`;
+
+                    const title = item.querySelector('.title');
+                    const meta = item.querySelector('.meta');
+                    
+                    if (dist < 100) { 
+                        title.style.color = "#ffffff";
+                        meta.style.opacity = 1;
+                        item.style.zIndex = 10;
+                    } else {
+                        title.style.color = "rgba(255,255,255,0.3)";
+                        meta.style.opacity = 0;
+                        item.style.zIndex = 1;
+                    }
+                } else {
+                    if (item.style.opacity !== '0.1') {
+                        item.style.transform = `scale(0.8)`;
+                        item.style.opacity = 0.1;
+                        item.style.filter = `blur(5px)`;
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        // --- 6. INITIALIZATION ---
+        window.addEventListener('resize', calculateDimensions);
+        viewport.addEventListener('scroll', checkInfiniteLoop);
+
+        setTimeout(() => {
+            calculateDimensions();
+            viewport.scrollTop = (itemHeight * renderData.length) / 2;
+            animate();
+        }, 100);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #050505;
+            --card-bg: #0f0f0f;
+            --input-bg: #111111;
+            --border-color: #262626;
+            --text-main: #ffffff;
+            --text-muted: #888;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* --- Main Card --- */
+        .contact-card {
+            width: 100%;
+            max-width: 400px; /* Mobile width */
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 32px;
+            padding: 30px 25px;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            
+            /* Initial State for Card Entrance */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardEntrance 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* --- Header / Close Button --- */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .studio-logo svg { width: 30px; fill: white; }
+        
+        .close-btn {
+            background: #1a1a1a;
+            border: none;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Testimonials --- */
+        .testimonial-section {
+            text-align: center;
+            margin-bottom: 20px;
+            min-height: 70px; /* Prevent layout jump */
+        }
+        
+        .client-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .quote-container {
+            position: relative;
+            height: 50px;
+            overflow: hidden;
+        }
+
+        .quote-text {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #ccc;
+            font-style: italic;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+
+        .quote-text.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Avatars --- */
+        .avatars {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid var(--card-bg);
+            background-size: cover;
+            background-position: center;
+            background-color: #333;
+        }
+
+        .avatar:nth-child(2) { margin-left: -12px; z-index: 2; }
+        .avatar:first-child { z-index: 1; }
+
+        /* --- Hero Text --- */
+        .hero-text {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .hero-text h2 {
+            font-size: 18px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero-text p {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.4;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        /* --- Form --- */
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid #222;
+            padding: 14px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            font-family: var(--font-main);
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus { border-color: #444; }
+        textarea.form-input { height: 80px; resize: none; }
+
+        /* --- Send Button --- */
+        .send-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 5px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover { background: #e0e0e0; }
+
+        /* Button "Sent" State */
+        .send-btn.sent {
+            background: #2ecc71;
+            color: white;
+            pointer-events: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0 10px;
+            font-size: 10px;
+            color: #333;
+            position: relative;
+        }
+        
+        .divider::before, .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #222;
+        }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+
+        .email-link {
+            text-align: center;
+            display: block;
+            color: #666;
+            font-size: 11px;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+
+        /* --- STAGGERED ANIMATIONS --- */
+        /* This creates the "slide up one by one" effect seen in the video */
+        
+        .anim-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: staggerSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Delays for each item */
+        .anim-delay-1 { animation-delay: 0.1s; } /* Avatars */
+        .anim-delay-2 { animation-delay: 0.2s; } /* Text */
+        .anim-delay-3 { animation-delay: 0.3s; } /* Input 1 */
+        .anim-delay-4 { animation-delay: 0.4s; } /* Input 2 */
+        .anim-delay-5 { animation-delay: 0.5s; } /* Input 3 */
+        .anim-delay-6 { animation-delay: 0.6s; } /* Button */
+
+        @keyframes cardEntrance {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes staggerSlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="contact-card">
+    
+    <div class="card-header">
+        <div class="studio-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </div>
+       <button class="close-btn" onclick="history.back()">✕</button>
+    </div>
+
+    <div class="testimonial-section">
+        <div class="client-label">FREELANCE CLIENT</div>
+        <div class="quote-container">
+            <div class="quote-text active" id="quote1">"He's easy to work with and very attentive to all the requests I had."</div>
+            <div class="quote-text" id="quote2">"We'll absolutely be working with you again. So impressed by your work and speed."</div>
+        </div>
+    </div>
+
+    <div class="avatars anim-item anim-delay-1">
+        <div class="avatar" style="background-image: url('https://i.pravatar.cc/150?img=68');"></div>
+        <div class="avatar" style="background-image: url('https://i.pravatar.cc/150?img=33');"></div>
+    </div>
+
+    <div class="hero-text anim-item anim-delay-2">
+        <h2>LET'S WORK TOGETHER</h2>
+        <p>Tell me a bit about your project, timeline, and rough budget below...</p>
+    </div>
+
+    <form class="contact-form" id="contactForm">
+        <input type="text" class="form-input anim-item anim-delay-3" placeholder="Name" required>
+        <input type="email" class="form-input anim-item anim-delay-4" placeholder="Email" required>
+        <textarea class="form-input anim-item anim-delay-5" placeholder="Your Message"></textarea>
+        
+        <button type="submit" class="send-btn anim-item anim-delay-6" id="submitBtn">
+            <span id="btnText">Send</span>
+        </button>
+    </form>
+
+    <div class="divider">OR</div>
+    <a href="#" class="email-link">Send email to studio@budobud.graphics</a>
+
+</div>
+
+<script>
+    // --- Testimonial Rotator ---
+    const q1 = document.getElementById('quote1');
+    const q2 = document.getElementById('quote2');
+    
+    setInterval(() => {
+        // Toggle active class to trigger CSS transition
+        if(q1.classList.contains('active')){
+            q1.classList.remove('active');
+            q2.classList.add('active');
+        } else {
+            q2.classList.remove('active');
+            q1.classList.add('active');
+        }
+    }, 4000);
+
+    // --- Button "Sent" Animation ---
+    const form = document.getElementById('contactForm');
+    const btn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // 1. Change text to "Sending..."
+        btnText.innerText = "Sending...";
+        btn.style.opacity = "0.7";
+
+        // 2. Simulate network delay (1 second)
+        setTimeout(() => {
+            // 3. Success State
+            btn.classList.add('sent');
+            btn.style.opacity = "1";
+            btnText.innerHTML = "Sent ✓";
+            
+            // Optional: Reset form after a few seconds
+            setTimeout(() => {
+                form.reset();
+                btn.classList.remove('sent');
+                btnText.innerText = "Send";
+            }, 3000);
+        }, 1000);
+    });
+</script>
+
+</body>
+</html>
