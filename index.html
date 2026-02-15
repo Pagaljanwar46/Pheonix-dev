@@ -2,914 +2,509 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aftab | Full Stack Developer Portfolio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Loris Bukvic Portfolio Clone</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Pixelify+Sans:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
-        /* --- RESET & VARIABLES --- */
         :root {
-            --bg-color: #0f0510; /* Very dark purple/black */
-            --bg-gradient: radial-gradient(circle at 50% 50%, #4a0e2e 0%, #0f0510 70%);
-            --primary-color: #d61c4e; /* Bright Pink/Red */
-            --primary-hover: #ff2e63;
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #ffffff;
-            --text-secondary: #b3b3b3;
-            --font-main: 'Poppins', sans-serif;
-            --card-radius: 16px;
+            --bg-color: #050505;
+            --text-main: #FFFFFF;
+            --text-dim: #666666;
+            --card-bg: #111111;
+            --accent-glow: rgba(255, 255, 255, 0.15);
+            --font-display: 'Unbounded', sans-serif;
+            --font-pixel: 'Pixelify Sans', monospace;
+            --font-body: 'Inter', sans-serif;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            text-decoration: none;
-            list-style: none;
-            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: var(--font-main);
             background-color: var(--bg-color);
-            background-image: var(--bg-gradient);
             color: var(--text-main);
+            font-family: var(--font-body);
             overflow-x: hidden;
-            min-height: 100vh;
+            padding-bottom: 200px; /* Space for the floating UI */
         }
 
-        /* --- UTILITIES --- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+        /* --- SMOOTH SCROLL --- */
+        html { scroll-behavior: smooth; }
 
-        .btn {
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border: none;
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            box-shadow: 0 4px 15px rgba(214, 28, 78, 0.4);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: white;
-            background: var(--glass-bg);
-        }
-
-        .btn-outline:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
+        /* --- 1. HERO SECTION (The Swinging Character) --- */
+        .hero {
             position: relative;
-            display: inline-block;
+            height: 90vh;
             width: 100%;
-        }
-        
-        .section-title span {
-            border-bottom: 3px solid var(--primary-color);
-            padding-bottom: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            overflow: hidden;
         }
 
-        /* --- NAVBAR --- */
-        header {
-            position: fixed;
-            top: 20px;
+        /* The blue lightning/cloud background effect */
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 60%;
+            background: radial-gradient(circle at 50% 30%, rgba(20, 40, 60, 0.4), transparent 70%);
+            z-index: 0;
+        }
+
+        /* The Hanging Container */
+        .swinger-container {
+            position: absolute;
+            top: -100px; /* Move up so the chain starts off-screen */
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
-            max-width: 800px;
-            z-index: 1000;
-        }
-
-        .navbar {
-            background: rgba(40, 10, 30, 0.6);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 50px;
-            padding: 10px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: 0.3s;
-        }
-
-        .nav-links a.active, .nav-links a:hover {
-            color: var(--primary-color);
-        }
-
-        .nav-links i {
-            font-size: 1rem;
-        }
-
-        /* --- HERO SECTION --- */
-        #home {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding-top: 80px;
-        }
-
-        .hero-container {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 50px;
-            align-items: center;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 30px;
-            padding: 60px;
-            width: 100%;
-            max-width: 1100px;
-            backdrop-filter: blur(5px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-        }
-
-        .hero-badges {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .badge {
-            font-size: 0.7rem;
-            padding: 5px 12px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.1);
-            color: #ddd;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .hero-text h1 {
-            font-size: 3.5rem;
-            line-height: 1.1;
-            margin-bottom: 20px;
-        }
-
-        .hero-text p {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            margin-bottom: 30px;
-            max-width: 400px;
-            line-height: 1.6;
-        }
-
-        .live-status {
-            margin-top: 30px;
-        }
-        
-        .status-header {
-            font-size: 0.75rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .status-buttons {
-            display: flex;
-            gap: 15px;
-        }
-
-        /* Circular UI Animation */
-        .hero-visual {
-            position: relative;
-            height: 300px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .circle-ui {
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            border: 1px solid rgba(214, 28, 78, 0.3);
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: rotate 20s linear infinite;
-        }
-
-        .inner-circle {
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, rgba(214,28,78,0.8) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 30px rgba(214, 28, 78, 0.4);
-        }
-
-        .inner-text {
-            font-size: 0.8rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .orbit-dot {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--primary-color);
-        }
-
-        .orbit-dot:nth-child(1) { top: -5px; left: 50%; }
-        .orbit-dot:nth-child(2) { bottom: -5px; left: 50%; }
-        .orbit-dot:nth-child(3) { top: 50%; left: -5px; }
-
-        .ui-labels {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+            z-index: 10;
+            /* Pendulum Physics */
+            transform-origin: 50% 0; /* Pivot at the very top */
+            animation: pendulum 5s ease-in-out infinite;
             pointer-events: none;
         }
-        .ui-label {
-            position: absolute;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-        }
-        .label-top-left { top: 0; left: 0; }
-        .label-top-right { top: 0; right: 0; }
 
-        /* --- ABOUT SECTION --- */
-        .about-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: center;
-            padding: 80px 20px;
-        }
-
-        .about-image img {
-            width: 100%;
+        .swinger-img {
+            width: 70vw;
             max-width: 400px;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            border: 1px solid var(--glass-border);
+            filter: drop-shadow(0 0 30px rgba(0, 200, 255, 0.15));
         }
 
-        .about-text .status-pill {
-            background: rgba(214, 28, 78, 0.2);
-            color: var(--primary-color);
-            padding: 5px 15px;
-            border-radius: 20px;
+        @keyframes pendulum {
+            0% { transform: translateX(-50%) rotate(3deg); }
+            50% { transform: translateX(-50%) rotate(-3deg); }
+            100% { transform: translateX(-50%) rotate(3deg); }
+        }
+
+        .hero-text-wrapper {
+            z-index: 20;
+            margin-top: auto;
+            max-width: 900px;
+        }
+
+        .hero-label {
+            font-family: var(--font-body);
+            color: var(--text-dim);
             font-size: 0.8rem;
-            display: inline-block;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            display: block;
+            letter-spacing: 0.5px;
         }
 
-        .about-text h2 {
-            font-size: 3rem;
-            margin-bottom: 10px;
+        .hero-headline {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: clamp(24px, 5vw, 48px);
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: -1px;
         }
 
-        .about-text h3 {
-            font-size: 1.5rem;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
+        /* --- SECTION STYLING --- */
+        section {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
         }
 
-        .about-description {
-            color: #ccc;
-            line-height: 1.6;
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
             margin-bottom: 30px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 10px;
         }
 
-        .skills-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 30px;
+        .h-title {
+            font-family: var(--font-pixel);
+            font-size: 2.5rem;
+            line-height: 1;
+            margin: 0;
         }
 
-        .skill-tag {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            padding: 5px 15px;
-            border-radius: 5px;
-            font-size: 0.85rem;
-            color: #ddd;
+        .h-link {
+            font-size: 0.9rem;
+            color: #fff;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            cursor: pointer;
         }
 
-        .about-buttons {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .social-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--glass-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            border: 1px solid var(--glass-border);
-            transition: 0.3s;
-        }
-
-        .social-btn:hover {
-            background: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        /* --- PROJECTS SECTION --- */
-        #projects {
-            padding: 80px 0;
-        }
-
-        .projects-grid {
+        /* --- WORKS GRID --- */
+        .works-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
 
-        .project-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--card-radius);
+        .work-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
             overflow: hidden;
-            transition: 0.3s;
+            position: relative;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        .project-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        .work-card:active { transform: scale(0.96); }
+        .work-card:hover { transform: scale(0.98); }
+
+        .work-card img {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        .work-card:hover img { opacity: 1; }
+
+        .work-meta {
+            position: absolute;
+            bottom: 15px; left: 15px;
+            z-index: 5;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .work-name { font-weight: 700; font-size: 1.1rem; }
+        .work-cat { font-size: 0.8rem; color: #ccc; }
+
+        /* --- AWARDS LIST (The layout from video: Icon Left, Text Right) --- */
+        .list-row {
+            display: grid;
+            grid-template-columns: 50px 1fr;
+            padding: 20px 0;
+            border-bottom: 1px solid #1a1a1a;
+            align-items: start;
         }
 
-        .project-img {
+        .list-icon {
+            font-family: 'Times New Roman', serif;
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: #444;
+        }
+        /* Custom styling for specific icons to match video */
+        .icon-w { font-family: sans-serif; font-weight: 900; } 
+        .icon-m { font-family: monospace; font-weight: 900; }
+
+        .list-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .list-content p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        /* --- STACK --- */
+        .stack-box {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-dim);
+        }
+        .stack-box span { color: #fff; margin: 0 4px; }
+
+        /* --- FOOTER / GLITCH PORTRAIT --- */
+        .footer-visual {
+            position: relative;
             width: 100%;
-            height: 200px;
-            background-color: #222; /* Placeholder color */
+            height: 500px; /* Tall area for the portrait */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 40px;
             overflow: hidden;
         }
 
-        .project-img img {
+        .glitch-face {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: 0.5s;
-        }
-        
-        .project-card:hover .project-img img {
-            transform: scale(1.05);
-        }
-
-        .project-content {
-            padding: 20px;
+            /* The specific grainy/distorted look */
+            filter: grayscale(100%) contrast(1.4) brightness(0.7);
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
         }
 
-        .project-title {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
+        /* SVG Distortion Filter */
+        .distortion-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: transparent;
+            backdrop-filter: url(#turbulence); /* Requires SVG in HTML */
+            pointer-events: none;
         }
 
-        .project-desc {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-
-        .tech-stack {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .tech-badge {
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 4px;
-            color: #aaa;
-        }
-
-        .project-links {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-sm {
-            padding: 6px 16px;
-            font-size: 0.8rem;
-        }
-
-        /* --- SERVICES SECTION --- */
-        #services {
-            padding: 80px 0;
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .service-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-            border: 1px solid var(--glass-border);
-            border-radius: var(--card-radius);
-            padding: 30px;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-        .service-card:hover {
-            border-color: var(--primary-color);
-            background: linear-gradient(145deg, rgba(214,28,78,0.1), rgba(0,0,0,0));
-        }
-
-        .service-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-
-        .service-card h3 {
-            margin-bottom: 15px;
-        }
-
-        .service-card p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 25px;
-        }
-
-        .service-tags {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .service-tag {
-            font-size: 0.8rem;
-            background: rgba(214, 28, 78, 0.2);
-            color: #ff8fa3;
-            padding: 4px 10px;
-            border-radius: 12px;
-        }
-
-        /* --- CONTACT SECTION --- */
-        #contact {
-            padding: 80px 0;
-            margin-bottom: 50px;
-        }
-
-        .contact-wrapper {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 30px;
-            padding: 50px;
-            display: grid;
-            grid-template-columns: 1fr 1.5fr;
-            gap: 50px;
-        }
-
-        .contact-info h2 {
+        .lets-work-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-pixel);
             font-size: 2rem;
-            margin-bottom: 15px;
+            text-transform: uppercase;
+            z-index: 10;
+            text-shadow: 0 4px 20px rgba(0,0,0,1);
         }
 
-        .contact-info p {
-            color: var(--text-secondary);
-            margin-bottom: 30px;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            color: #ddd;
-        }
-
-        .contact-item i {
-            color: var(--primary-color);
-            font-size: 1.2rem;
-        }
-
-        .contact-form {
+        /* --- FIXED BOTTOM DOCK (The UI Stack) --- */
+        .ui-stack {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            align-items: center;
+            gap: 12px;
         }
 
-        .input-group input, .input-group textarea {
-            width: 100%;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--glass-border);
-            padding: 15px;
-            border-radius: 10px;
-            color: white;
-            font-family: inherit;
-            outline: none;
-            transition: 0.3s;
+        /* 1. Contact Pill */
+        .btn-contact {
+            background: #e6e6e6;
+            color: #000;
+            padding: 12px 35px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+        .btn-contact:hover { transform: scale(1.05); }
+        .btn-contact:active { transform: scale(0.95); }
 
-        .input-group input:focus, .input-group textarea:focus {
-            border-color: var(--primary-color);
+        /* 2. Works Folder Block */
+        .dock-folder {
+            width: 60px;
+            height: 60px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .dock-folder:hover {
+            transform: translateY(-2px);
+            background: rgba(40,40,40,0.9);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .dock-folder i { font-size: 24px; color: #fff; margin-bottom: 2px; }
+        .dock-folder span { font-size: 10px; color: #888; font-family: var(--font-pixel); letter-spacing: 1px; }
+
+        /* 3. Social Row */
+        .dock-socials {
+            display: flex;
+            gap: 10px;
             background: rgba(0,0,0,0.5);
+            padding: 5px;
+            border-radius: 18px;
+        }
+        .social-btn {
+            width: 48px;
+            height: 48px;
+            background: #0f0f0f;
+            border: 1px solid #222;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .social-btn:hover {
+            background: #222;
+            border-color: #555;
+            transform: translateY(-2px);
         }
 
-        .input-group textarea {
-            resize: none;
-            height: 120px;
-        }
-
-        /* --- RESPONSIVE --- */
-        @media (max-width: 900px) {
-            .hero-container, .about-container, .contact-wrapper {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .hero-container {
-                padding: 40px 20px;
-            }
-
-            .hero-visual {
-                height: 200px;
-                order: -1; /* visual on top for mobile */
-            }
-
-            .about-image {
-                order: -1;
-            }
-
-            .about-text, .about-buttons, .skills-container, .social-icons {
-                justify-content: center;
-            }
-
-            .navbar {
-                padding: 10px 15px;
-            }
-
-            .nav-links {
-                gap: 15px;
-            }
-            
-            .nav-links span {
-                display: none; /* Hide text on small screens, show icons only */
-            }
-        }
-
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        /* SVG Filter for Distortion (Hidden but active) */
+        #svg-filters { position: absolute; width: 0; height: 0; }
+.work-card {
+    display: block; /* Ensures the anchor tag acts like a box/div */
+    text-decoration: none; /* Removes the underline from links */
+    color: inherit; /* Ensures text color stays white/as defined */
+    cursor: pointer; /* Shows the hand icon on hover */
+    
+    /* ... keep your existing work-card styles here ... */
+}
     </style>
 </head>
 <body>
 
-    <header>
-        <nav class="navbar">
-            <div class="nav-links">
-                <a href="#home" class="active"><i class="fas fa-home"></i> <span>Home</span></a>
-                <a href="#about"><i class="fas fa-user"></i> <span>About</span></a>
-                <a href="#projects"><i class="fas fa-layer-group"></i> <span>Projects</span></a>
-                <a href="#services"><i class="fas fa-code"></i> <span>Services</span></a>
-                <a href="#contact"><i class="fas fa-envelope"></i> <span>Contact</span></a>
-            </div>
-        </nav>
+    <svg id="svg-filters">
+        <defs>
+            <filter id="turbulence">
+                <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="30" />
+            </filter>
+        </defs>
+    </svg>
+
+    <header class="hero">
+        <div class="hero-bg"></div>
+        
+        <div class="swinger-container">
+            <img src="https://cdn.pixabay.com/photo/2023/12/08/06/01/robot-8437050_1280.png" class="swinger-img" alt="3D Character">
+        </div>
+
+        <div class="hero-text-wrapper">
+            <span class="hero-label">Lorisbukvic.graphics</span>
+            <h1 class="hero-headline">
+                Loris Bukvic is a cook turned multimedia designer focusing on web experiences, and stuff that looks good.
+            </h1>
+        </div>
     </header>
 
-    <section id="home">
-        <div class="hero-container">
-            <div class="hero-text">
-                <div class="hero-badges">
-                    <span class="badge">• SYSTEM READY</span>
-                    <span class="badge">PORTFOLIO 2026</span>
-                    <span class="badge">UI LOADING</span>
-                </div>
-                <h1>Welcome to<br>my Portfolio<br>Website</h1>
-                <p>Building modern, reliable, and fast digital experiences with a focus on clean UI and solid engineering.</p>
-                
-                <div class="live-status">
-                    <div class="status-header">LIVE STATUS</div>
-                    <div class="status-buttons">
-                         <a href="https://www.linkedin.com/in/yourprofile" class="btn btn-outline btn-sm"><i class="fas fa-linkedin-in"></i> LINKEDIN</a>
-                        <a href="https://github.com/yourprofile" class="btn btn-outline btn-sm"><i class="fas fa-github"></i> GITHUB</a>
-                        <a href="https://www.fiverr.com/yourprofile" class="btn btn-outline btn-sm"><i class="fas fa-circle-notch"></i>FIVERR</a>
-                    </div>
-                </div>
-            </div>
+    <section id="works">
+        <div class="section-header">
+            <h2 class="h-title">WORKS</h2>
+           <div class="h-link" onclick="window.location.href='work_menu.html'">Go to Works →</div>
+        </div>
+        
+        <div class="works-grid">
+    <a href="#" class="work-card">
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" alt="Project 1">
+        <div class="work-meta">
+            <div class="work-name">Daydream Player</div>
+            <div class="work-cat">Web / 3D</div>
+        </div>
+    </a>
 
-            <div class="hero-visual">
-                <div class="ui-labels">
-                    <span class="ui-label label-top-left">CORE UI</span>
-                    <span class="ui-label label-top-right">ONLINE</span>
-                </div>
-                <div class="circle-ui">
-                    <div class="orbit-dot"></div>
-                    <div class="orbit-dot"></div>
-                    <div class="orbit-dot"></div>
-                    <div class="inner-circle">
-                        <span class="inner-text">WELCOME</span>
-                    </div>
+    <a href="#" class="work-card">
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" alt="Project 2">
+        <div class="work-meta">
+            <div class="work-name">Bennszorult Lélegzet</div>
+            <div class="work-cat">Interactive</div>
+        </div>
+    </a>
+
+    <a href="#" class="work-card">
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop" alt="Project 3">
+        <div class="work-meta">
+            <div class="work-name">ParkBee</div>
+            <div class="work-cat">Product Design</div>
+        </div>
+    </a>
+</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="container">
-        <section id="about" class="about-container">
-            <div class="about-text">
-                <span class="status-pill">Available for freelance work</span>
-                <h2>Hi, I'm Aftab</h2>
-                <h3>Full Stack Developer</h3>
-                <p class="about-description">
-                    I build clean, responsive, and modern web applications using HTML, CSS, JavaScript, and Firebase. I enjoy creating user-friendly interfaces and connecting them with reliable backend services.
-                    <br><br>
-                    I’ve worked on multiple personal and client-style projects, focusing on frontend design, responsiveness, authentication, and real-time data handling with Firebase. Currently, I’m improving my full stack skills with React, Tailwind CSS, and advanced Firebase features while continuing to grow through real-world projects.
-                </p>
-                
-                <div class="skills-container">
-                    <span class="skill-tag"># HTML</span>
-                    <span class="skill-tag"># CSS</span>
-                    <span class="skill-tag"># JavaScript</span>
-                    <span class="skill-tag"># Firebase</span>
-                    <!-- <span class="skill-tag"># emailjs-com</span> -->
-                </div>
-
-                <div class="about-buttons">
-                    <a href="https://www.fiverr.com/s/VYArB7e" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Hire Me</a>
-                    <a href="#" class="btn btn-outline"><i class="fas fa-download"></i> Download CV</a>
-                </div>
-
-                <div class="social-icons">
-                    <a href="https://github.com/Pagaljanwar46" class="social-btn"><i class="fab fa-github"></i></a>
-                    <a href="https://www.linkedin.com/in/sk-aftab-9a5a90345/" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="https://www.instagram.com/04_09_007_/" class="social-btn"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.upwork.com/freelancers/~01101064c74ba0ebd5?mp_source=share" class="social-btn"><i class="fab fa-dribbble"></i></a>
-                </div>
+    <section>
+        <div class="section-header">
+            <h2 class="h-title">AWARDS AND<br>RECOGNITIONS</h2>
+        </div>
+        
+        <div class="list-row">
+            <div class="list-icon icon-w">W.</div>
+            <div class="list-content">
+                <h3>AWWWARDS</h3>
+                <p>Site of The Day | DAYDREAM PLAYER</p>
             </div>
-
-            <div class="about-image">
-                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Amine&backgroundColor=b6e3f4" alt="Profile Avatar">
+        </div>
+        <div class="list-row">
+            <div class="list-icon icon-m">m</div>
+            <div class="list-content">
+                <h3>MUZLI</h3>
+                <p>Featured on Muzli Picks | DAYDREAM PLAYER</p>
             </div>
-        </section>
-
-        <section id="projects">
-            <h2 class="section-title"><span>Featured Work</span></h2>
-            <p style="text-align: center; color: #aaa; margin-bottom: 40px;">A showcase of my recent projects demonstrating expertise in full-stack development.</p>
-            
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-img">
-                        <img src="https://res.cloudinary.com/dgcr7e27r/image/upload/v1769442257/Screenshot_2026-01-26_184751_gleqqw.png" alt="E-commerce">
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">KENDRICK & ARTIST</h3>
-                        <p class="project-desc">Modern Blog site with responsive design and latest features.</p>
-                        <div class="tech-stack">
-                            <span class="tech-badge">HTML</span>
-                            <span class="tech-badge">CSS</span>
-                            <span class="tech-badge">JS</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="https://github.com/Pagaljanwar46/KENDRICK-ARTISTS" class="btn btn-outline btn-sm">GitHub</a>
-                            <a href=" https://pagaljanwar46.github.io/KENDRICK-ARTISTS/" class="btn btn-primary btn-sm">Live Demo</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-img">
-                         <img src="https://res.cloudinary.com/dgcr7e27r/image/upload/v1769442466/Screenshot_2026-01-26_211723_gmt37t.png" alt="Portfolio">
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">Restaurant Portfolio</h3>
-                        <p class="project-desc">Personal portfolio to showcase your business.</p>
-                        <div class="tech-stack">
-                            <span class="tech-badge">HTML</span>
-                            <span class="tech-badge">CSS</span>
-                            <span class="tech-badge">Bootstrap</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="https://github.com/Pagaljanwar46/restaurants-preview" class="btn btn-outline btn-sm">GitHub</a>
-                            <a href="https://pagaljanwar46.github.io/restaurants-preview/" class="btn btn-primary btn-sm">Live Demo</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-img">
-                         <img src="https://images.unsplash.com/photo-1592210454359-9043f067919b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Weather App">
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title">Weather App</h3>
-                        <p class="project-desc">Responsive app showing real-time weather data using API integration and dynamic backgrounds.</p>
-                        <div class="tech-stack">
-                            <span class="tech-badge">JS</span>
-                            <span class="tech-badge">API</span>
-                            <span class="tech-badge">CSS</span>
-                        </div>
-                        <div class="project-links">
-                            <a href="#" class="btn btn-outline btn-sm">GitHub</a>
-                            <a href="#" class="btn btn-primary btn-sm">Live Demo</a>
-                        </div>
-                    </div>
-                </div>
+        </div>
+        <div class="list-row">
+            <div class="list-icon">B̄</div>
+            <div class="list-content">
+                <h3>BEHANCE</h3>
+                <p>Featured in Product Design</p>
             </div>
-        </section>
-
-        <section id="services">
-            <h2 class="section-title"><span>OUR Features & Services</span></h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon"><i class="fas fa-code"></i></div>
-                    <h3>Web Development</h3>
-                    <p>I create responsive, modern websites using the latest technologies and best practices.</p>
-                    <div class="service-tags">
-                        <span class="service-tag">Responsive</span>
-                        <span class="service-tag">SEO Friendly</span>
-                        <span class="service-tag">Fast</span>
-                    </div>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
-                    <h3>Mobile Development</h3>
-                    <p>Building mobile applications that work seamlessly on both iOS and Android devices.</p>
-                    <div class="service-tags">
-                        <span class="service-tag">Cross-Platform</span>
-                        <span class="service-tag">Native Performance</span>
-                    </div>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon"><i class="fas fa-paint-brush"></i></div>
-                    <h3>UI/UX Design</h3>
-                    <p>Designing intuitive and visually appealing user interfaces that bring ideas to life.</p>
-                    <div class="service-tags">
-                        <span class="service-tag">User Centered</span>
-                        <span class="service-tag">Modern Design</span>
-                    </div>
-                </div>
+        </div>
+        <div class="list-row">
+            <div class="list-icon">Ps</div>
+            <div class="list-content">
+                <h3>BEHANCE</h3>
+                <p>Featured in Photoshop Category</p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="contact">
-            <h2 class="section-title"><span>Contact</span></h2>
-            <div class="contact-wrapper">
-                <div class="contact-info">
-                    <h2>Get In Touch</h2>
-                    <p>Let's collaborate! I am always open to discussing exciting projects and new opportunities.</p>
-                    
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <span>skaftab890678909@gmail.com</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <span>+91 9836109275</span>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Uluberia, Howrah</span>
-                    </div>
+    <section>
+        <div class="section-header">
+            <h2 class="h-title">EDUCATION</h2>
+        </div>
+        <div class="list-row" style="border:none;">
+            <div class="list-icon">•</div>
+            <div class="list-content">
+                <h3>Pre Graduate</h3>
+                <p>Higher secoundary</p>
+            </div>
+        </div>
 
-                    <div class="social-icons" style="margin-top: 30px;">
-                        <a href="https://www.linkedin.com/in/sk-aftab-9a5a90345/" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="https://whatsapp.com/channel/0029VbBwkM62P59eHtRtHI3M" class="social-btn"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                </div>
+        <div class="section-header" style="margin-top: 50px;">
+            <h2 class="h-title">STACK</h2>
+        </div>
+        <div class="stack-box">
+            <span>HTML</span> / <span>CSS</span> / <span>JavaScript</span> / <span>After Effects</span> / <span>Firebase</span> / <span>Unity</span> / <span>Figma</span> / <span>Node.JS</span> / <span>Webflow</span> / <span>Canva</span>
+        </div>
+    </section>
 
-               <form class="contact-form" id="contact-form">
-    <div class="input-group">
-        <input type="text" name="from_name" placeholder="Your Name" required>
+    <div class="footer-visual">
+        <div class="distortion-overlay"></div>
+        <img src="https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=800&auto=format&fit=crop" class="glitch-face" alt="Portrait">
+        
+        <div class="lets-work-text">Let's Work Together</div>
     </div>
-    <div class="input-group">
-        <input type="email" name="from_email" placeholder="Your Email" required>
-    </div>
-    <div class="input-group">
-        <textarea name="message" placeholder="Your Message" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
-        Send Message
-    </button>
-</form>
 
-            </div>
-        </section>
+   <div class="ui-stack">
+    <button class="btn-contact" onclick="window.location.href='contact.html'">Contact</button>
+    
+    <div class="dock-folder" onclick="window.location.href='work_menu.html'">
+        <i class="ph-fill ph-folder-notch"></i>
+        <span>WORKS</span>
+    </div>
+</div>
+        
+        <div class="dock-socials">
+            <a href="https://www.instagram.com/04_09_007_/" class="social-btn"><i class="ph-bold ph-instagram-logo"></i></a>
+            <a href="https://www.fiverr.com/s/vvLqlQe" class="social-btn"><i class="ph-bold ph-behance-logo"></i></a>
+            <a href="https://whatsapp.com/channel/0029VbBwkM62P59eHtRtHI3M" class="social-btn"><i class="ph-bold ph-paper-plane-tilt"></i></a>
+        </div>
     </div>
 
     <script>
-        // Active Link Switching on Scroll
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-links a');
-
-        window.addEventListener('scroll', () => {
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (scrollY >= (sectionTop - 200)) {
-                    current = section.getAttribute('id');
-                }
-            });
-
-            navLinks.forEach(a => {
-                a.classList.remove('active');
-                if (a.getAttribute('href').includes(current)) {
-                    a.classList.add('active');
-                }
-            });
+        // Simple script to add a subtle parallax or interaction if needed
+        const swinger = document.querySelector('.swinger-img');
+        
+        // Optional: Make the swing react slightly to mouse movement
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.clientX) / 50;
+            if(swinger) {
+                // We add the mouse influence on top of the CSS animation
+                // Note: CSS animation might override this unless we wrap it
+            }
         });
     </script>
-
-
-
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
-<script>
-  (function () {
-    emailjs.init("y2QtL7MIldSoVuijD"); // replace
-  })();
-
-  const form = document.getElementById("contact-form");
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    emailjs.sendForm(
-      "service_kauwkk6",   // replace
-      "template_l98l22n",  // replace
-      this
-    )
-    .then(() => {
-      alert("Message sent successfully!");
-      form.reset();
-    })
-    .catch((error) => {
-      alert("Failed to send message. Please try again.");
-      console.error(error);
-    });
-  });
-</script>
-
 </body>
 </html>
